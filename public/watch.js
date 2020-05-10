@@ -1,10 +1,9 @@
 let peerConnection;
+
 const config = {
-  iceServers: [
-    {
-      urls: ['stun:stun.l.google.com:19302']
-    }
-  ]
+  iceServers: [{
+    urls: ['stun:stun.l.google.com:19302']
+  }]
 };
 
 const socket = io.connect(window.location.origin);
@@ -19,25 +18,23 @@ socket.on('offer', (id, description) => {
     .then(sdp => peerConnection.setLocalDescription(sdp))
     .then(() => socket.emit('answer', id, peerConnection.localDescription));
 
-  peerConnection.ontrack = event => video.srcObject = event.streams[0];
+  peerConnection.ontrack = ({ streams }) => video.srcObject = streams[0];
 
-  peerConnection.onicecandidate = event => {
-    if (event.candidate) {
-      socket.emit('candidate', id, event.candidate);
+  peerConnection.onicecandidate = ({ candidate }) => {
+    if (candidate) {
+      socket.emit('candidate', id, candidate);
     }
   };
 });
 
-socket.on('candidate', (id, candidate) => peerConnection
+socket.on('candidate', (_id, candidate) => peerConnection
   .addIceCandidate(new RTCIceCandidate(candidate))
   .catch(console.error));
 
 socket.on('connect', () => socket.emit('watcher'));
 
-socket.on('broadcaster', () =>
-  socket.emit('watcher'));
+socket.on('broadcaster', () => socket.emit('watcher'));
 
-socket.on('disconnectPeer', () =>
-  peerConnection.close());
+socket.on('disconnectPeer', () => peerConnection.close());
 
 window.onunload = window.onbeforeunload = () => socket.close();

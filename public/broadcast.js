@@ -10,9 +10,7 @@ const socket = io.connect(window.location.origin);
 const video = document.querySelector('video');
 
 const constraints = {
-  video: {
-    facingMode: 'user'
-  },
+  video: true,
   audio: true,
 };
 
@@ -24,20 +22,19 @@ navigator.mediaDevices
   })
   .catch(console.error);
 
-
 socket.on('watcher', id => {
   const peerConnection = new RTCPeerConnection(config);
   peerConnections[id] = peerConnection;
 
-  let stream = video.srcObject;
+  const stream = video.srcObject;
 
   stream
     .getTracks()
     .forEach(track => peerConnection.addTrack(track, stream));
 
-  peerConnection.onicecandidate = event => {
-    if (event.candidate) {
-      socket.emit('candidate', id, event.candidate);
+  peerConnection.onicecandidate = ({ candidate }) => {
+    if (candidate) {
+      socket.emit('candidate', id, candidate);
     }
   };
 

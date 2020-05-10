@@ -7,10 +7,6 @@ server.listen(4000, () => console.log('Server is running'));
 
 app.use(express.static(__dirname + '/public'));
 
-app.get('/', (req, res) => res.send({
-  runnig: true,
-}));
-
 io.on('error', console.error);
 
 let broadcaster;
