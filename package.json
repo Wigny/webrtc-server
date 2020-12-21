@@ -2,7 +2,11 @@
   "name": "webrtc",
   "scripts": {
     "tsc": "tsc",
-    "start": "yarn tsc && node dist/index.js"
+    "start": "yarn tsc && node dist/index.js",
+    "postinstall": "yarn tsc"
+  },
+  "engines": {
+    "node": "12.x"
   },
   "dependencies": {
     "dotenv": "^8.2.0",
