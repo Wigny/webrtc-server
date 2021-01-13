@@ -41,6 +41,10 @@ io.on('connection', (socket: Socket) => {
     .emit('candidate', socket.id, message));
 });
 
+app.get('/', (_req, res) => res.json({
+  running: true
+}))
+
 http.listen(process.env.PORT || 8080, () => {
   console.log(`Running in ${process.env.PORT || 8080}`);
 });
